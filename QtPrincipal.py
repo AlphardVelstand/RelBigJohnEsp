@@ -17,7 +17,7 @@ from ui_main import Ui_Form
 import sys
 import pandas as pd
 import datetime
-from datetime import date
+from datetime import datetime
 import time
 import re
 import requests
@@ -57,13 +57,21 @@ def abrirArquivo(self):
     global FaturamentoPorDia
     global faturamento, total_entregas, incentivo_iffod, incentivo_restaurante
     global TabelaFitradaPorData
-    global dataIni = dataIniStrtoData
-    global dataFin
+    global dataIniStrtoData
+    global dataFinStrtoData
+    #global dataIni = dataIniStrtoData
+    #global dataFin
     #tabela_pedidos = pd.read_excel('lista-de-pedidos.xlsx')
     #tabela_pedidoos = QFileDialog.setReadOnly()
 
     #tabela_pedidoos = QFileDialog.getOpenFileNames()
     tabela_pedidos = pd.read_excel = QFileDialog.getOpenFileNames()
+    #Capturando a data e Convertendo para D/M/A
+    hoje = datetime.today()
+    print(hoje)
+    printHoje = hoje.strftime("%d/%m/%Y %H:%M:%S")
+    print(printHoje)
+
     #tabela_pedidos = pandas.read_excel(f'{tabela_pedidoos}')
 
     #tabela_pedidos = pd.read_excel(r'{tabela_pedidos}', engine='openpyxl')
@@ -80,14 +88,16 @@ def gerarCorpoEmail():
     #tabela_pedidos = pd.read_excel(f'{tabela_pedidoos}')
     #print(type(tabela_pedidos))
 
+    print(dataIni, dataFin)
+
     # Filtro para selecionar a data
     TabelaFitradaPorData = tabela_pedidos[
-        (tabela_pedidos['DATA'] >= f'{dataIniStrtoData}') & (tabela_pedidos['DATA'] <= f'{dataFinStrtoData}')]
+        (tabela_pedidos['DATA'] >= f'{dataIni}') & (tabela_pedidos['DATA'] <= f'{dataFin}')]
 
     # Selecionando por dia
     FaturamentoPorDia = TabelaFitradaPorData[['DATA PEDIDO', 'RESTAURANTE', 'TOTAL DO PARCEIRO']].groupby(
         'DATA PEDIDO').sum()
-    #print(FaturamentoPorDia)
+    print("Relatorio gerado")
 
 #Função que gera o relatório
 def gerarRelatorio(self):
@@ -98,9 +108,16 @@ def gerarRelatorio(self):
     global TabelaFitradaPorData
     global dataIni
     global dataFin
+    global dataIniStrtoData
+    global dataFinStrtoData
     #Selecionando o QLineEdit e armazenadno o texto dele nas variaveis
-    dataIni = window.lineEditDataIni.text()
-    dataFin = window.lineEditDataFin.text()
+    dataIniStrtoData = window.lineEditDataIni.text()
+    dataFinStrtoData = window.lineEditDataFin.text()
+
+    dataIni = datetime.strptime(f"{dataIniStrtoData}", '%d-%m-%Y')
+    dataFin = datetime.strptime(f"{dataFinStrtoData}", '%d-%m-%Y')
+    #print(type(dataIni, dataFin))
+
     #tabela_pedidos = pd.read_excel(f'{tabela_pedidoos}')
     print(dataIni," atè ", dataFin)
     #gerarCorpoEmail()
